@@ -22,4 +22,71 @@ return $q->execute();
   public function getNonPsycho(){
       return Doctrine_Query::create()->from('AdNonPsychoPat npp')->where('npp.patient_id = ?',$this->getPatientId())->execute();
   }
+
+   public function berekenBNF($patient_id) as double
+  {
+
+      bnfWaarde == '0';
+
+
+      /** selectie van alle voorschriften per patient met patient_id **/
+      $p = Doctrine_Query::create()
+      ->from('ad_prescription a')
+      ->where('a.patient_id = ?', $patient_id)
+      ->select('a.med_form_id','a.end_date');
+      return $p->execute();
+
+      i == '0';
+
+          do{
+
+         /**
+          * gegevens prescription : end_date
+          *         opzoeken med_form_id in med_form
+          *         gegevens hlf
+          *                 opzoeken med_form_id in med_bnf_medicine
+          *                 gegevens bnf_percentage_id
+          *                         opzoeken bnf_percentage_id in med_bnf_percentage
+          *                         gegevens percentage = p
+          **/
+              $d = Doctrine_Query::create()
+              ->from('med_form m')
+              ->where(m.med_form_id = ?, a.med_form_id)
+              ->select('m.hlf')
+              return $d->execute()
+
+                      $s = Doctrine_Query::create()
+                      ->from('med_bnf_medicine b')
+                      ->where(b.med_form_id = ?, a.med_form_id)
+                      -select('b.bnf_percentage_id')
+                      return $s->execute()
+
+                            $n = Doctrine_Query::create()
+                            ->from('med_bnf_percentage p')
+                            ->where(p.bnf_percentage_id = ?, b.bnf_percentage_id)
+                            ->select('p.percentage')
+                            return $n->execute()
+
+          if (a.end_date !== null){
+               Tijd = 5 * ((m.hlf)/ 60);                 /**(stel hln in uren)**/
+
+                if (a.end_date.time() + Tijd) > time()){
+                    bnfWaarde == p.percentage;
+                }else{
+
+                    bnfWaarde == bnfWaarde + p.percentage;
+                }
+                endif
+          }else{
+
+              bnfWaarde == bnfwaarde + p.percentage;
+               }
+          endif
+
+          i == i + 1;
+          }
+          while(i < p.count);    /**afhankelijk van het aantal prescriptions **/
+
+      return bnfWaarde;
+  }
 }
