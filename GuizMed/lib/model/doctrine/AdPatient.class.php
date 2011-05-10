@@ -49,6 +49,7 @@ return $q->execute();
           *                         opzoeken bnf_percentage_id in med_bnf_percentage
           *                         gegevens percentage = p
           **/
+
               $d = Doctrine_Query::create()
               ->from('med_form m')
               ->where(m.med_form_id = ?, a.med_form_id)
@@ -68,9 +69,15 @@ return $q->execute();
                             return $n->execute()
 
           if (a.end_date !== null){
-               Tijd = 5 * ((m.hlf)/ 60);                 /**(stel hln in uren)**/
+               $hlf = explode("-",m.hlf);                   /** koppelteken als splitsing aangeduid tss twee waarden**/
+               Tijd = 5 * ((.$hlf[1])/ 60);                 /** berekening met de tweede (hoogste) waarde uit de db(stel hln in uren)**/
 
-                if (a.end_date.time() + Tijd) > time()){
+               date_default_timezone_set('UTC');
+               $today = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"))
+               $end_date_prescription = a.end_date()
+               $verschil= ($end_date_prescription-$today + 1)/86400 ;
+
+                if ($verschil > 1){
                     bnfWaarde == p.percentage;
                 }else{
 
