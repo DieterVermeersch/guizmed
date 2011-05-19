@@ -951,3 +951,30 @@ May 10 06:56:46 symfony [info] {sfWebDebugLogger} Action "Medicijn/index" 52.81 
 May 10 06:56:46 symfony [info] {sfWebDebugLogger} Database (Doctrine) 0.02 ms (2)
 May 10 06:56:46 symfony [info] {sfWebDebugLogger} View "Success" for "Medicijn/index" 30.34 ms (1)
 May 10 06:56:46 symfony [info] {sfWebResponse} Send content (32642 o)
+May 14 14:38:04 symfony [info] {sfPatternRouting} Match route "default_index" (/:module) for /Medicijn with parameters array (  'module' => 'Medicijn',  'action' => 'index',)
+May 14 14:38:05 symfony [info] {sfFilterChain} Executing filter "sfRenderingFilter"
+May 14 14:38:05 symfony [info] {sfFilterChain} Executing filter "sfExecutionFilter"
+May 14 14:38:05 symfony [info] {MedicijnActions} Call "MedicijnActions->executeIndex()"
+May 14 14:38:05 symfony [err] {Doctrine_Exception} Couldn't find class Medicijn
+May 14 14:38:05 symfony [info] {sfWebResponse} Send status "HTTP/1.1 500 Internal Server Error"
+May 14 14:38:05 symfony [info] {sfWebResponse} Send header "Content-Type: text/html; charset=utf-8"
+May 14 14:38:05 symfony [info] {sfWebDebugLogger} Configuration 1011.03 ms (9)
+May 14 14:38:05 symfony [info] {sfWebDebugLogger} Factories 244.69 ms (1)
+May 14 14:38:05 symfony [info] {sfWebDebugLogger} Action "Medicijn/index" 312.65 ms (1)
+May 14 14:38:13 symfony [info] {sfPatternRouting} Match route "default_index" (/:module) for /Medicijnen with parameters array (  'module' => 'Medicijnen',  'action' => 'index',)
+May 14 14:38:13 symfony [info] {sfFrontWebController} Action "Medicijnen/index" does not exist
+May 14 14:38:13 symfony [err] {sfError404Exception} Action "Medicijnen/index" does not exist.
+May 14 14:38:13 symfony [info] {sfWebResponse} Send status "HTTP/1.1 404 Not Found"
+May 14 14:38:13 symfony [info] {sfWebResponse} Send header "Content-Type: text/html; charset=utf-8"
+May 14 14:38:13 symfony [info] {sfWebDebugLogger} Configuration 6.06 ms (5)
+May 14 14:38:13 symfony [info] {sfWebDebugLogger} Factories 60.69 ms (1)
+May 16 19:25:31 symfony [info] {sfPatternRouting} Match route "default_index" (/:module) for /Medicijn with parameters array (  'module' => 'Medicijn',  'action' => 'index',)
+May 16 19:25:31 symfony [info] {sfFilterChain} Executing filter "sfRenderingFilter"
+May 16 19:25:31 symfony [info] {sfFilterChain} Executing filter "sfExecutionFilter"
+May 16 19:25:31 symfony [info] {MedicijnActions} Call "MedicijnActions->executeIndex()"
+May 16 19:25:31 symfony [err] {Doctrine_Exception} Couldn't find class Medicijn
+May 16 19:25:31 symfony [info] {sfWebResponse} Send status "HTTP/1.1 500 Internal Server Error"
+May 16 19:25:31 symfony [info] {sfWebResponse} Send header "Content-Type: text/html; charset=utf-8"
+May 16 19:25:31 symfony [info] {sfWebDebugLogger} Configuration 554.12 ms (9)
+May 16 19:25:31 symfony [info] {sfWebDebugLogger} Factories 169.57 ms (1)
+May 16 19:25:31 symfony [info] {sfWebDebugLogger} Action "Medicijn/index" 238.49 ms (1)

@@ -10,90 +10,201 @@
  * @author     Your name here
  * @version    SVN: $Id: Builder.php 7490 2010-03-29 19:53:27Z jwage $
  */
-class AdPatient extends BaseAdPatient
-{
-  public function getPrescriptions($id)
-  {
-    $q = Doctrine_Query::create()
-    ->from('AdPrescription p')
-    ->where('p.user_patient_id = ?', $id);
-return $q->execute();
-  }
-  public function getNonPsycho(){
-      return Doctrine_Query::create()->from('AdNonPsychoPat npp')->where('npp.patient_id = ?',$this->getPatientId())->execute();
-  }
-
-   public function berekenBNF($patient_id) as double
-  {
-
-      bnfWaarde == '0';
+class AdPatient extends BaseAdPatient {
 
 
-      /** selectie van alle voorschriften per patient met patient_id **/
-      $p = Doctrine_Query::create()
-      ->from('ad_prescription a')
-      ->where('a.patient_id = ?', $patient_id)
-      ->select('a.med_form_id','a.end_date');
-      return $p->execute();
+    public function getPrescriptions($id) {
+        $q = Doctrine_Query::create()
+                        ->from('AdPrescription p')
+                        ->where('p.user_patient_id = ?', $id);
+        return $q->execute();
+    }
 
-      i == '0';
 
-          do{
+    public function getNonPsycho() {
+        return Doctrine_Query::create()
+                        ->from('AdNonPsychoPat npp')
+                        ->where('npp.patient_id = ?', $this->getPatientId())
+                        ->execute();
+        }       
 
-         /**
-          * gegevens prescription : end_date
-          *         opzoeken med_form_id in med_form
-          *         gegevens hlf
-          *                 opzoeken med_form_id in med_bnf_medicine
-          *                 gegevens bnf_percentage_id
-          *                         opzoeken bnf_percentage_id in med_bnf_percentage
-          *                         gegevens percentage = p
-          **/
 
-              $d = Doctrine_Query::create()
-              ->from('med_form m')
-              ->where(m.med_form_id = ?, a.med_form_id)
-              ->select('m.hlf')
-              return $d->execute()
 
-                      $s = Doctrine_Query::create()
-                      ->from('med_bnf_medicine b')
-                      ->where(b.med_form_id = ?, a.med_form_id)
-                      -select('b.bnf_percentage_id')
-                      return $s->execute()
+    public function berekenBNF($patient_id)
+        {
+        
+         $bnfWaarde = 0;
+        /** $patient_id = 1;**/
+        /** selectie van alle voorschriften per patient met patient_id * */
 
-                            $n = Doctrine_Query::create()
-                            ->from('med_bnf_percentage p')
-                            ->where(p.bnf_percentage_id = ?, b.bnf_percentage_id)
-                            ->select('p.percentage')
-                            return $n->execute()
+        $p = Doctrine_Query::create()
+        ->from('AdPrescription a')
+        ->where('a.user_patient_id = ?', $patient_id)
+        ->execute();
+                
+        foreach($p as $prec): /**elk voorschrift overlopen per patient**/
 
-          if (a.end_date !== null){
-               $hlf = explode("-",m.hlf);                   /** koppelteken als splitsing aangeduid tss twee waarden**/
-               Tijd = 5 * ((.$hlf[1])/ 60);                 /** berekening met de tweede (hoogste) waarde uit de db(stel hln in uren)**/
+            $m = $prec->getMedFormId();
+            $ed = $prec->getEndDate();
+            $f = $prec->getMedForm();
+            $sd = $prec->getStopDate();
+            $dos = $prec->getDose();
+           
+            $h = $f->getHlf();
+             /**echo $dos;**/
+            $t = Doctrine_Query::create()
+                ->from('MedBnfMedicine b')
+                ->where('b.med_form_id = ?', $m)
+                ->execute();
+         
 
-               date_default_timezone_set('UTC');
-               $today = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"))
-               $end_date_prescription = a.end_date()
-               $verschil= ($end_date_prescription-$today + 1)/86400 ;
+                     foreach ($t as $bnf):                                      /** voor elke medform van de prescription het bnf opzoeken**/
+                                $s = $bnf->getMedBnfPercentage();
 
-                if ($verschil > 1){
-                    bnfWaarde == p.percentage;
-                }else{
+                                $v = $s->getPercentage();
+                                $val = $bnf->getValue();
+                                $val2 = explode(".", $val);
 
-                    bnfWaarde == bnfWaarde + p.percentage;
-                }
-                endif
-          }else{
+                          if ($dos == $val2[0]){
+                                        if ($sd != null){                       /**1ste voorwaarde = geen stopdatum ingevuld**/
 
-              bnfWaarde == bnfwaarde + p.percentage;
-               }
-          endif
+                                        $bnfVal = 0;
 
-          i == i + 1;
-          }
-          while(i < p.count);    /**afhankelijk van het aantal prescriptions **/
+                                        $today = date("Y-m-d H:i:s");
+                                        $sd = $prec->getStopDate();
 
-      return bnfWaarde;
-  }
+                                        $h = $f->getHlf(); 
+
+                                                                            if (preg_match("/d/i", $h)) {   /** in de juiste vorm gieten van hlf om bij de einddatum te tellen**/
+
+
+                                                                            $hlf = explode(" ", $h); /** indien met spatie **/
+                                                                            $days = 5 * $hlf[0];
+
+                                                                            $m = floor ($days / 30);
+                                                                            $d = floor ($days - $m * 30);
+                                                                                                              /** echo 'plus'. $m .'maanden en '. $d .'dagen is :';**/
+
+                                                                            $ST = new DateTime($sd);
+
+                                                                             date_add($ST, new DateInterval('P'. $m .'M'. $d .'D'));
+                                                                             $sd = $ST;
+
+                                                                            } else {
+
+                                                                                    if (preg_match("/-/i", $h)) { /** indien met koppelteken **/
+
+                                                                                        $hlf = explode("-", $h);
+                                                                                        $hours = 5 * $hlf[1];
+
+                                                                                        $d = floor ($hours / 24);
+                                                                                        $hr = floor ($hours - $d * 24);
+                                                                                                                    /**echo 'plus'. $d .'dagen en '. $hr .'uren is :';**/
+                                                                                        $ST = new DateTime($sd);
+                                                                                        date_add($ST, new DateInterval('P'. $d .'DT'. $hr .'H'));
+                                                                                        $sd = $ST;
+                                                                                      } else {                     /**zonder een van voorgaande **/
+
+
+                                                                                                    $hours = 5 * $h;
+
+                                                                                                    $d = floor ($hours / 24);
+                                                                                                    $hr = floor (($hours - $d * 24) / 60);
+
+                                                                                                    $ST = new DateTime($sd);
+                                                                                                    date_add($ST, new DateInterval('P'. $d .'DT'. $hr .'H'));
+                                                                                                    $sd = $ST;
+                                                                                      }
+
+
+                                                                        }
+
+
+
+
+
+                                             if ($today < $ST){           /**voorwaarde verschil tussen vandaag en  stopdatum **/
+
+                                                   
+                                                    $bnfVal = $v;
+
+                                                }else{
+                                                   
+                                                   $bnfVal = 0;
+                                                }
+
+                                        }else{                                  /**indien geen stopdatum**/
+
+                                                $ed = $prec->getEndDate();      /**einddatum opzoeken **/
+                                                $today = date("Y-m-d H:i:s");
+
+                                                $h = $f->getHlf();              /**hlf ophalen **/
+
+
+                                                                           if (preg_match("/d/i", $h)) {   /** in de juiste vorm gieten van hlf om bij de einddatum te tellen**/
+
+
+                                                                            $hlf = explode(" ", $h); /** indien met spatie **/
+                                                                            $days = 5 * $hlf[0];
+
+                                                                            $m = floor ($days / 30);
+                                                                            $d = floor ($days - $m * 30);
+                                                                                                              /** echo 'plus'. $m .'maanden en '. $d .'dagen is :';**/
+
+                                                                            $ET = new DateTime($ed);
+
+                                                                             date_add($ET, new DateInterval('P'. $m .'M'. $d .'D'));
+                                                                             $ed = $ET;
+
+                                                                            } else {
+
+                                                                                    if (preg_match("/-/i", $h)) { /** indien met koppelteken **/
+
+                                                                                        $hlf = explode("-", $h);
+                                                                                        $hours = 5 * $hlf[1];
+
+                                                                                        $d = floor ($hours / 24);
+                                                                                        $hr = floor ($hours - $d * 24);
+                                                                                                                    /**echo 'plus'. $d .'dagen en '. $hr .'uren is :';**/
+                                                                                        $ET = new DateTime($ed);
+                                                                                        date_add($ET, new DateInterval('P'. $d .'DT'. $hr .'H'));
+                                                                                        $ed = $ET;
+                                                                                      } else {                     /**zonder een van voorgaande **/
+
+
+                                                                                                    $hours = 5 * $h;
+
+                                                                                                    $d = floor ($hours / 24);
+                                                                                                    $hr = floor (($hours - $d * 24) / 60);
+
+                                                                                                    $ET = new DateTime($ed);
+                                                                                                    date_add($ET, new DateInterval('P'. $d .'DT'. $hr .'H'));
+                                                                                                    $ed = $ET;
+                                                                                      }
+
+
+                                                                        }
+
+
+                        
+                                                    if($today < $ET){           /** als vandaag nog voor de einddatum is **/
+
+                                                            $bnfVal = $v;       /** bnfwaarde meerekenen**/
+                                                            /**echo $v.'+';**/
+                                                         }else{
+
+                                                            $bnfVal = 0;        /** anders niet meerekenen**/
+                                                        }
+
+                                                }
+                                          $bnfWaarde += $bnfVal;                /** gevonden waarde bij bnfWaarde optellen **/
+                                    }
+
+                           endforeach;
+
+                    endforeach;
+
+        return $bnfWaarde;
+        
+    }
 }
